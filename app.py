@@ -7,7 +7,7 @@ from utils import detect_pupil, resize_image
 
 app = Flask(__name__)
 app.config.from_object(__name__)
-app.config['UPLOAD_FOLDER'] = 'static\\uploads'
+app.config['UPLOAD_FOLDER'] = 'static/uploads'
 
 ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg','PNG', 'JPG', 'JPEG']
 
