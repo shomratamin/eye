@@ -1,0 +1,58 @@
+
+.canvas-container {
+	background-color: black;
+}
+
+#main-canvas {
+	display: inline-block;
+	position: relative !important;
+	margin: 0 auto !important;
+	text-align: center;
+}
+
+.app-container {
+	background-color: #ededed;
+	padding: 20px 0 0 0;
+	text-align: center;
+	height: auto;
+}
+
+.main-container {
+	width: 95% !important;
+	box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.1);
+}
+
+.tool-box {
+	background-color: #fff;
+	border-radius: 5px;
+	box-shadow: 0 5px 35px 0 rgba(0, 0, 0, 0.08);
+	padding: 0 8px 0 8px;
+}
+
+.tool-box .btn {
+	background-color: white;
+	border: none;
+	color: black;
+	font-size: 24px;
+	cursor: pointer;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	border-radius: 5px !important;
+	padding: 2px 10px 2px 10px !important;
+
+}
+
+.btn-selected {
+	background-color: #18589f !important;
+	color: white !important;
+}
+
+.btn:hover {
+	background-color: #18589f !important;
+	color: white;
+}
+
+.information-container .add_padding {
+	margin: 0 28px 0 0;
+	text-align: center;
+}

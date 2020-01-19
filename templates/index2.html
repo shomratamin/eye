@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>Pupil Center Detection Stage 1</title>
+	<link rel="stylesheet" href="static/css/w3.css" />
+	<script type="text/javascript" src="static/js/jquery.js"></script>
+	<script type="text/javascript" src="static/js/jquery.filedrop.js"></script>
+	<!-- <script type="text/javascript" src="static/js/upload.js"></script> -->
+</head>
+
+<body>
+	<div id="dropzone">
+		<span class="message">Drop image here to upload.</span>
+	</div>
+	<div class="verify_div">
+		<button id="verify_button">Detect Pupil</button>
+		<!-- <button id="verify_bulk_button">Bulk Verify</button> -->
+		<!-- <button id="previous_button">Previous</button> -->
+		<!-- <button id="next_button">Next</button> -->
+	</div>
+
+	<div class="progress_bar">
+		<div class="w3-light-grey">
+			<div id="progress_value" class="w3-container w3-red w3-padding w3-center" style="width:100%">Drag and drop image</div>
+		</div>
+	</div>
+
+	<div class="aligned_faces">
+		<img id="image1">
+	</div>
+
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+
+		html {
+			min-height: 100%;
+			position: relative;
+
+		}
+
+		body {
+			color: grey;
+			background-color: #fff;
+			min-height: 600px;
+			font: 14px/1.3 'Segoe UI', Arial, sans-serif;
+		}
+
+		.aligned_faces {
+			width: 95%;
+			margin: 30px auto 20px;
+			text-align: center;
+		}
+
+		.aligned_faces img {
+			max-width: 100%;
+			position: relative;
+			vertical-align: text-top;
+		}
+
+		.progress_bar {
+			width: 50%;
+			margin: 0 auto;
+			border: 1px dashed;
+		}
+
+		#progress_value {
+			height: 70px;
+			padding: 24px 0px !important;
+			font-size: 18px;
+		}
+
+		.verify_div {
+			text-align: center;
+			width: 100%;
+		}
+
+		#verify_button {
+			margin: 20px auto;
+			background-color: #2196F3;
+			color: white;
+			padding: 15px 32px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 16px;
+		}
+
+		#verify_bulk_button {
+			margin: 20px auto;
+			background-color: green;
+			color: white;
+			padding: 15px 32px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 16px;
+		}
+
+		#previous_button {
+			margin: 20px auto;
+			background-color: deeppink;
+			color: white;
+			padding: 15px 32px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 16px;
+		}
+
+		#next_button {
+			margin: 20px auto;
+			background-color: deeppink;
+			color: white;
+			padding: 15px 32px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 16px;
+		}
+
+		#dropzone {
+			border: 1px solid grey;
+			border-radius: 3px;
+			position: relative;
+			margin: 10px auto 10px;
+			min-height: 200px;
+			overflow: hidden;
+			padding-bottom: 40px;
+			width: 800px;
+			background: #333
+		}
+
+
+		#dropzone .message {
+			font-size: 11px;
+			text-align: center;
+			padding-top: 70px;
+			display: block;
+		}
+
+		#dropzone:before {
+			border-radius: 3px 3px 0 0;
+		}
+
+		#dropzone .preview {
+			width: 210px;
+			height: 145px;
+			float: left;
+			margin: 10px 0 0 40px;
+			position: relative;
+			text-align: center;
+		}
+
+		#dropzone .preview img {
+			max-width: 200px;
+			max-height: 140px;
+			border: 3px solid #fff;
+			display: block;
+			box-shadow: 0 0 2px #000;
+		}
+
+		#dropzone .imageHolder {
+			position: relative;
+		}
+
+		#dropzone .uploaded {
+			position: absolute;
+			top: 0;
+			left: 0;
+			height: 100%;
+			width: 100%;
+			background: url('../static/img/done.png') no-repeat center center rgba(255, 255, 255, 0.5);
+			display: none;
+		}
+
+		#dropzone .preview.done .uploaded {
+			display: block;
+		}
+
+		#dropzone .progressHolder {
+			position: absolute;
+			background-color: #252f38;
+			height: 12px;
+			width: 100%;
+			left: 0;
+			bottom: 0;
+			box-shadow: 0 0 2px #000;
+		}
+
+		#dropzone .progress {
+			background-color: #2586d0;
+			position: absolute;
+			height: 100%;
+			left: 0;
+			width: 0;
+			box-shadow: 0 0 1px rgba(255, 255, 255, 0.4) inset;
+			-moz-transition: 0.25s;
+			-webkit-transition: 0.25s;
+			-o-transition: 0.25s;
+			transition: 0.25s;
+		}
+
+		#dropzone .preview.done .progress {
+			width: 100% !important;
+		}
+
+
+		.modal {
+			display: none;
+			position: fixed;
+			z-index: 1000;
+			top: 0;
+			left: 0;
+			height: 100%;
+			width: 100%;
+			background: rgba(255, 255, 255, .5) url('static/img/loader.gif') 50% 50% no-repeat;
+		}
+
+		/* When the body has the loading class, we turn
+   the scrollbar off with overflow:hidden */
+		body.loading .modal {
+			overflow: hidden;
+		}
+
+		/* Anytime the body has the loading class, our
+   modal element will be visible */
+		body.loading .modal {
+			display: block;
+		}
+	</style>
+
+
+	<script>
+		var uploaded_images = ['none']
+		var next_image_index = 0
+		var cos = .45
+
+		$(function () {
+
+			$(document).keydown(function (e) {
+				if (e.which == 39) {
+					next()
+				}
+				else if (e.which == 37) {
+					previous()
+				}
+			});
+
+			$body = $("body");
+
+			$(document).on({
+				ajaxStart: function () { $body.addClass("loading"); },
+				ajaxStop: function () { $body.removeClass("loading"); }
+			});
+
+			var dropzone = $('#dropzone'),
+				message = $('.message', dropzone);
+
+			dropzone.filedrop({
+				paramname: 'file',
+				maxfiles: 1,
+				maxfilesize: 5,
+				url: '/upload',
+
+				uploadFinished: function (i, file, response) {
+					$.data(file).addClass('done');
+					uploaded_images[next_image_index] = response.image
+					$('#verify_button').removeAttr('disabled');
+					$('#verify_button').css('background-color', '#2196F3')
+
+				},
+
+				error: function (err, file) {
+					switch (err) {
+						case 'BrowserNotSupported':
+							showMessage('Your browser does not support HTML5 file uploads!');
+							break;
+						case 'TooManyFiles':
+							alert('Too many files! Please select ' + this.maxfiles + ' at most!');
+							break;
+						case 'FileTooLarge':
+							alert(file.name + ' is too large! The size is limited to ' + this.maxfilesize + 'MB.');
+							break;
+						default:
+							break;
+					}
+				},
+
+
+				beforeEach: function (file) {
+					if (!file.type.match(/^image\//)) {
+						alert('Only images are allowed!');
+						return false;
+					}
+					$('#verify_button').attr('disabled', true)
+					$('#verify_button').css('background-color', '#CDCDCD')
+
+				},
+
+				uploadStarted: function (i, file, len) {
+					var _preview = $('#dropzone .preview')
+					if (_preview.length >= 1) {
+						_preview.first().remove()
+					}
+					createImage(file);
+				},
+
+				progressUpdated: function (i, file, progress) {
+					$.data(file).find('.progress').width(progress);
+				}
+
+			});
+
+			var template = '<div class="preview">' +
+				'<span class="imageHolder">' +
+				'<img />' +
+				'<span class="uploaded"></span>' +
+				'</span>' +
+				'<div class="progressHolder">' +
+				'<div class="progress"></div>' +
+				'</div>' +
+				'</div>';
+
+
+			function createImage(file) {
+
+				var preview = $(template),
+					image = $('img', preview);
+
+				var reader = new FileReader();
+
+				image.width = 100;
+				image.height = 100;
+
+				reader.onload = function (e) {
+					image.attr('src', e.target.result);
+				};
+
+				reader.readAsDataURL(file);
+
+				message.hide();
+				preview.appendTo(dropzone);
+
+				$.data(file, preview);
+			}
+
+			function showMessage(msg) {
+				message.html(msg);
+			}
+
+
+			function previous() {
+
+
+				$.get('previousrs', function (data) {
+					if (data.success == true) {
+						var _similarity = Number(data.cosine)
+						var _interpret = (1 - _similarity) * 100
+						_interpret = Math.round(_interpret * 100) / 100
+						console.log('cosine: ' + _similarity)
+						console.log('euclid: ' + data.euclid)
+
+						if (_similarity < cos) {
+							$('#progress_value').removeClass('w3-red').addClass('w3-green')
+							$('#progress_value').text(' Same person' + ' (Nid no: ' + data.nid + ' )')
+						}
+						else {
+							$('#progress_value').removeClass('w3-green').addClass('w3-red')
+							$('#progress_value').text(' Not same person')
+						}
+
+
+
+						// $('#progress_value').css('width', data.similarity + '%')
+						$('#progress_value').css('width', '100%')
+
+
+						$('#image1').attr('src', data.image1)
+						$('#image2').attr('src', data.image2)
+					}
+					else {
+
+						$('#progress_value').removeClass('w3-green').addClass('w3-red')
+						$('#progress_value').css('width', '100%')
+						if (data.hasOwnProperty('nid')) {
+							$('#progress_value').text(data.message + ' (Nid no: ' + data.nid + ' )')
+						}
+						else {
+							$('#progress_value').text(data.message)
+						}
+						$('#image1').attr('src', data.image1)
+						$('#image2').attr('src', data.image2)
+					}
+				})
+			}
+
+			function next() {
+				$.get('nextrs', function (data) {
+					if (data.success == true) {
+						var _similarity = Number(data.cosine)
+						var _interpret = (1 - _similarity) * 100
+						_interpret = Math.round(_interpret * 100) / 100
+						console.log('cosine: ' + _similarity)
+						console.log('euclid: ' + data.euclid)
+
+						if (_similarity < cos) {
+							$('#progress_value').removeClass('w3-red').addClass('w3-green')
+							$('#progress_value').text(' Same person' + ' (Nid no: ' + data.nid + ' )')
+						}
+						else {
+							$('#progress_value').removeClass('w3-green').addClass('w3-red')
+							$('#progress_value').text(' Not same person')
+						}
+
+
+
+						// $('#progress_value').css('width', data.similarity + '%')
+						$('#progress_value').css('width', '100%')
+
+
+						$('#image1').attr('src', data.image1)
+						$('#image2').attr('src', data.image2)
+					}
+					else {
+
+						$('#progress_value').removeClass('w3-green').addClass('w3-red')
+						$('#progress_value').css('width', '100%')
+						if (data.hasOwnProperty('nid')) {
+							$('#progress_value').text(data.message + ' (Nid no: ' + data.nid + ' )')
+						}
+						else {
+							$('#progress_value').text(data.message)
+						}
+						$('#image1').attr('src', data.image1)
+						$('#image2').attr('src', data.image2)
+					}
+				})
+			}
+
+			$('#verify_button').bind('click', function () {
+
+				if (uploaded_images[0].length < 10) {
+					$('#progress_value').css('width', '100%')
+					$('#progress_value').text('Please upload image to test !!')
+					return
+				}
+				$.get('detect', { img1: uploaded_images[0] }, function (data) {
+					if (data.success == true) {
+
+						// $('#progress_value').css('width', data.similarity + '%')
+						$('#progress_value').css('width', '100%')
+
+						$('#progress_value').removeClass('w3-red').addClass('w3-green')
+						$('#progress_value').text(`Success, time taken to process ${data.time} seconds`)
+						$('#image1').attr('src', data.image1)
+					}
+				})
+			})
+
+			$('#verify_bulk_button').bind('click', function () {
+				$('#progress_value').removeClass('w3-red').addClass('w3-green')
+				$('#progress_value').text('Verifying faces in bulk, it may take a while.')
+				$('#progress_value').css('width', '100%')
+
+
+				$.ajax({
+					url: "comparebulk",
+					error: function () {
+
+					},
+					success: function (data) {
+						console.log(data)
+						if (data.success) {
+							$('#progress_value').removeClass('w3-red').addClass('w3-green')
+						}
+						else {
+							$('#progress_value').removeClass('w3-green').addClass('w3-red')
+						}
+						$('#progress_value').text(data.message)
+
+					},
+					timeout: 3000000 // sets timeout to 3 seconds
+				});
+
+
+			})
+
+			$('#previous_button').bind('click', function () {
+				previous()
+			})
+
+			$('#next_button').bind('click', function () {
+
+				next()
+			})
+
+		});
+
+	</script>
+
+	<div class="modal"></div>
+</body>
+
+</html>
