@@ -78,6 +78,10 @@ function on_tool_box_button_click() {
 
   states['current_action'] = _button_action;
 }
+function remove_line_stat_row(line_index) {
+  let row_id = `#line_stat_row_${line_index}`
+  $(row_id).remove()
+}
 
 function add_line_stat_row(line_index) {
   let class_index = line_index
@@ -85,7 +89,7 @@ function add_line_stat_row(line_index) {
     class_index--
   }
   let table_class = table_classes[class_index % table_classes.length]
-  let html = `<tr class="${table_class}">
+  let html = `<tr class="${table_class}" id="line_stat_row_${current_line_index}">
   <th scope="row">Point ${line_index}</th>
   <td> 
       <!-- <i class="fa fa-arrows-h"></i> -->
@@ -412,6 +416,16 @@ $(document).ready(() => {
 
   main_canvas.bind('mouseleave', (event) => {
     canvas_tooltip.tooltip('hide')
+    if (states['current_action'] === 'distance_calculation') {
+      eye_board.remove_line_layer(current_line_index)
+      remove_line_stat_row(current_line_index)
+    }
+  })
+  main_canvas.bind('mouseenter', (event) => {
+    if (states['current_action'] === 'distance_calculation') {
+      eye_board.add_line_layer(current_line_index)
+      add_line_stat_row(current_line_index)
+    }
   })
 
   $(document).keypress(function (event) {

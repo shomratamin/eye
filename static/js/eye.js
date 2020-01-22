@@ -224,6 +224,14 @@ function EyeBoard(container = 'main-canvas') {
 
   this.repaint()
 
+  this.remove_line_layer = function(line_index){
+    let line_key = `line_${line_index}`
+    let layer_key = `distance_line_layer_${line_index}`
+    this.line_layers[layer_key].remove()
+    delete this.line_layers[layer_key]
+    delete this.lines[line_key]
+  }
+
   this.add_line_layer = function (line_index = 1, points = [0, 0, 0, 0]) {
     let line_key = `line_${line_index}`
     let layer_key = `distance_line_layer_${line_index}`
