@@ -16,6 +16,7 @@ function EyeBoard(container = 'main-canvas') {
   this.container = container;
   this.layers = {}
   this.white_to_white_pixels = -1;
+  this.white_to_white_pixels_original = -1;
   this.white_to_white_mm = -1;
   this.can_update_poly = true;
   this.initial_white_to_white = []
@@ -232,11 +233,14 @@ function EyeBoard(container = 'main-canvas') {
         return
       }
     }
-
+    let stroke_width = 2
+    if(line_index == 0){
+      stroke_width = 3
+    }
     let line = new Konva.Line({
       points: points,
       stroke: 'white',
-      strokeWidth: 2,
+      strokeWidth: stroke_width,
       lineCap: 'round',
       lineJoin: 'round'
     });
@@ -281,6 +285,7 @@ function EyeBoard(container = 'main-canvas') {
         board.tooltip_visible = false
       });
       line.on('transformend', function () {
+        board.white_to_white_pixels = board.white_to_white_pixels_original * board.lines["line_0"].scaleX()
         board.is_white_to_white_dragging = true
         board.tooltip_visible = true
       });
@@ -296,7 +301,7 @@ function EyeBoard(container = 'main-canvas') {
     this.stage.add(this.line_layers[layer_key])
   }
 
-  this.toggle_dragabble = function (type = 'circle', index = 0, value = 'undefined') {
+  this.toggle_draggable = function (type = 'circle', index = 0, value = 'undefined') {
     if (type === 'circle') {
       let circle_key = `circle_${index}`
       if (!this.circles.hasOwnProperty(circle_key))

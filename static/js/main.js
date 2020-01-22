@@ -40,12 +40,12 @@ function on_tool_box_button_click() {
     first_white_marker = [x - line_length, y]
     second_white_marker = [x + line_length, y]
     eye_board.add_line_layer(0, points)
-    eye_board.toggle_dragabble('line', 0, true)
+    eye_board.toggle_draggable('line', 0, true)
     eye_board.white_tot_white_transform.resizeEnabled(true)
     eye_board.line_layers["distance_line_layer_0"].batchDraw()
   }
   else {
-    eye_board.toggle_dragabble('line', 0, false)
+    eye_board.toggle_draggable('line', 0, false)
     if (eye_board.white_tot_white_transform !== 'undefined') {
       eye_board.white_tot_white_transform.resizeEnabled(false)
       eye_board.line_layers["distance_line_layer_0"].batchDraw()
@@ -54,14 +54,14 @@ function on_tool_box_button_click() {
 
   if (_button_action == 'draw_circle') {
     eye_board.add_circle_layer()
-    eye_board.toggle_dragabble(type = 'circle', index = 0, value = true)
+    eye_board.toggle_draggable(type = 'circle', index = 0, value = true)
     is_circle_dragging = true
     eye_board.circle_transform.resizeEnabled(true)
     eye_board.circle_layers["circle_layer_0"].batchDraw()
   }
   else {
     if (eye_board.circle_transform !== 'undefined' && eye_board.circle_layers.hasOwnProperty('circle_layer_0')) {
-      eye_board.toggle_dragabble(type = 'circle', index = 0, value = false)
+      eye_board.toggle_draggable(type = 'circle', index = 0, value = false)
       is_circle_dragging = false
       eye_board.circle_transform.resizeEnabled(false)
       eye_board.circle_layers["circle_layer_0"].batchDraw()
@@ -188,12 +188,12 @@ $(document).ready(() => {
     if (w_w.length > 0) {
       w_w = parseFloat(w_w);
       eye_board.white_to_white_mm = w_w;
-      eye_board.toggle_dragabble('line', 0, false)
+      eye_board.toggle_draggable('line', 0, false)
       eye_board.white_tot_white_transform.resizeEnabled(false)
       eye_board.line_layers["distance_line_layer_0"].batchDraw()
     }
     eye_board.add_circle_layer(0, eye_board.original_ref_center)
-    eye_board.toggle_dragabble(type = 'circle', index = 0, value = true)
+    eye_board.toggle_draggable(type = 'circle', index = 0, value = true)
     is_circle_dragging = true
     states['current_action'] = 'initial_reference_circle'
     $('#button_draw_circle').css('visibility', 'visible')
@@ -241,7 +241,7 @@ $(document).ready(() => {
       //   $('#main-canvas').removeClass('custom_cross_cursor move_cursor');
       //   $('#main-canvas').addClass('resize_cursor')
       //   canvas_tooltip.attr('data-original-title', 'Stretch line towards left').tooltip('show');
-      //   // eye_board.toggle_dragabble('line', 0, false)
+      //   // eye_board.toggle_draggable('line', 0, false)
       //   if(mouse_start_pos[0] !== -1 && mouse_start_pos[1] !== -1)
       //   {
       //     let x_distance =  point_location[0] - mouse_start_pos[0]
@@ -260,14 +260,14 @@ $(document).ready(() => {
       //     eye_board.stretch_white_to_white('right', x_distance)
       //     mouse_start_pos = point_location
       //   }
-      //   // eye_board.toggle_dragabble('line', 0, false)
+      //   // eye_board.toggle_draggable('line', 0, false)
       // }
       // else if(control === 'drag' || eye_board.is_white_to_white_dragging === true)
       // {
       //   $('#main-canvas').removeClass('custom_cross_cursor resize_cursor');
       //   $('#main-canvas').addClass('move_cursor');
       //   canvas_tooltip.attr('data-original-title', 'Drag the line').tooltip('show');
-      //   // eye_board.toggle_dragabble('line', 0, true)
+      //   // eye_board.toggle_draggable('line', 0, true)
       // }
       // if (first_white_marker[0] === -1) {
       //   canvas_tooltip.attr('data-original-title', 'Place first white point').tooltip('show');
@@ -425,7 +425,8 @@ $(document).ready(() => {
       }
       else if (states['current_action'] === 'white-to-white-marker') {
         let result = eye_board.calculate_distance(first_white_marker, second_white_marker, false, false, false, 0)
-        eye_board.white_to_white_pixels = result.distance;
+        eye_board.white_to_white_pixels = result.distance * eye_board.lines["line_0"].scaleX();
+        eye_board.white_to_white_pixels_original = result.distance;
         $('#information_modal').modal()
         // eye_board.clear_line_layer(0)
       }
@@ -467,7 +468,7 @@ $(document).ready(() => {
   //         }
   //       },
   //       callback: function (key, opt) {
-  //         eye_board.toggle_dragabble(type='circle', index=0)
+  //         eye_board.toggle_draggable(type='circle', index=0)
   //         is_circle_dragging = !is_circle_dragging
   //       }
   //     }
