@@ -24,7 +24,7 @@ function on_tool_box_button_click() {
     else {
       current_line_index++
     }
-
+    can_add_on_mouse_enter = false;
     eye_board.add_line_layer(current_line_index)
     add_line_stat_row(current_line_index)
 
@@ -120,6 +120,7 @@ function calculate_relative_position(element, mouse_x, mouse_y) {
 var eye_board = null;
 var states = {};
 states['current_action'] = 'pointer';
+var can_add_on_mouse_enter = false;
 
 
 var first_white_marker = [-1, -1];
@@ -419,10 +420,11 @@ $(document).ready(() => {
     if (states['current_action'] === 'distance_calculation') {
       eye_board.remove_line_layer(current_line_index)
       remove_line_stat_row(current_line_index)
+      can_add_on_mouse_enter = true
     }
   })
   main_canvas.bind('mouseenter', (event) => {
-    if (states['current_action'] === 'distance_calculation') {
+    if (states['current_action'] === 'distance_calculation' && can_add_on_mouse_enter === true) {
       eye_board.add_line_layer(current_line_index)
       add_line_stat_row(current_line_index)
     }
