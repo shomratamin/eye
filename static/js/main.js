@@ -190,12 +190,31 @@ $(document).ready(() => {
 
   $('#button_modal_done').bind('click', () => {
     let w_w = $('#white_to_white_input').val()
+    let sim_k1 = $('#sim_k1').val()
+    let sim_k2 = $('#sim_k2').val()
     if (w_w.length > 0) {
       w_w = parseFloat(w_w);
       eye_board.white_to_white_mm = w_w;
       eye_board.toggle_draggable('line', 0, false)
       eye_board.white_tot_white_transform.resizeEnabled(false)
       eye_board.line_layers["distance_line_layer_0"].batchDraw()
+    }
+    if(sim_k1.length > 0)
+    {
+      eye_board.sim_k1 = (1/sim_k1) * 1000
+    }
+    else
+    {
+      eye_board.sim_k1 = 'undefined'
+    }
+
+    if(sim_k2.length > 0)
+    {
+      eye_board.sim_k2 = (1/sim_k2) * 1000
+    }
+    else
+    {
+      eye_board.sim_k2 = 'undefined'
     }
     eye_board.add_circle_layer(0, eye_board.original_ref_center)
     eye_board.toggle_draggable(type = 'circle', index = 0, value = true)
@@ -220,7 +239,8 @@ $(document).ready(() => {
     let point_location = calculate_relative_position(main_canvas, event.pageX, event.pageY)
     if (eye_board.current_ref_center[0] !== -1 && eye_board.current_ref_center[1] !== -1 && states['current_action'] === 'distance_calculation') {
       let result = eye_board.calculate_distance(eye_board.current_ref_center, point_location, true, true, true, current_line_index)
-      $(`#distance_${current_line_index}`).text(result.distance)
+      let _distance = eye_board.calculate_distance_with_curvature(result.distance)
+      $(`#distance_${current_line_index}`).text(_distance)
       $(`#angle_${current_line_index}`).text(result.angle)
       $(`#angle2_${current_line_index}`).text(result.angle2)
     }

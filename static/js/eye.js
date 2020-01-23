@@ -28,6 +28,8 @@ function EyeBoard(container = 'main-canvas') {
   this.white_tot_white_transform = 'undefined'
   this.circle_transform = 'undefined'
   this.tooltip_visible = true
+  this.sim_k1 = 'undefined'
+  this.sim_k2 = 'undefined'
 
   this.line_layers = {}
   this.lines = {}
@@ -748,6 +750,20 @@ function EyeBoard(container = 'main-canvas') {
 
 
     return { 'distance': distance.toFixed(3), 'angle': angleDeg.toFixed(3), 'angle2': (360 - angleDeg).toFixed(3) }
+  }
+
+  this.calculate_distance_with_curvature = function(euclidean_distance){
+    if(this.sim_k1 !== 'undefined'){
+    let _val = (euclidean_distance * euclidean_distance) / (2 * this.sim_k1 * this.sim_k1)
+    _val = 1 - _val
+    let angle = Math.acos(_val)
+    let _distance = angle * this.sim_k1
+    return _distance
+    }
+    else
+    {
+      return euclidean_distance
+    }
   }
 
 };
