@@ -226,7 +226,7 @@ function EyeBoard(container = 'main-canvas') {
 
   this.repaint()
 
-  this.remove_line_layer = function(line_index){
+  this.remove_line_layer = function (line_index) {
     let line_key = `line_${line_index}`
     let layer_key = `distance_line_layer_${line_index}`
     this.line_layers[layer_key].remove()
@@ -244,7 +244,7 @@ function EyeBoard(container = 'main-canvas') {
       }
     }
     let stroke_width = 2
-    if(line_index == 0){
+    if (line_index == 0) {
       stroke_width = 3
     }
     let line = new Konva.Line({
@@ -255,7 +255,7 @@ function EyeBoard(container = 'main-canvas') {
       lineJoin: 'round'
     });
     if (line_index == 0) {
-      let tr = new Konva.Transformer({rotateEnabled:false,enabledAnchors:['middle-left','middle-right'],anchorSize:14, borderEnabled:false,anchorFill: "rgba(255, 255, 255, 0)"})
+      let tr = new Konva.Transformer({ rotateEnabled: false, enabledAnchors: ['middle-left', 'middle-right'], anchorSize: 14, borderEnabled: false, anchorFill: "rgba(255, 255, 255, 0)" })
       this.white_tot_white_transform = tr
       line.draggable(true)
       line.on('mouseover', function () {
@@ -267,8 +267,8 @@ function EyeBoard(container = 'main-canvas') {
       });
       line.on('mouseout', function () {
         if (line.draggable()) {
-        $('#main-canvas').removeClass();
-        $('#main-canvas').addClass('custom_cross_cursor')
+          $('#main-canvas').removeClass();
+          $('#main-canvas').addClass('custom_cross_cursor')
         }
       });
       line.on('dragstart', function () {
@@ -303,8 +303,7 @@ function EyeBoard(container = 'main-canvas') {
     this.lines[line_key] = line
     this.line_layers[layer_key] = new Konva.Layer({ clearBeforeDraw: true });
     this.line_layers[layer_key].add(this.lines[line_key])
-    if(line_index === 0)
-    {
+    if (line_index === 0) {
       this.line_layers[layer_key].add(this.white_tot_white_transform)
       this.white_tot_white_transform.attachTo(this.lines[line_key])
     }
@@ -336,26 +335,23 @@ function EyeBoard(container = 'main-canvas') {
       }
     }
   }
-  this.stretch_white_to_white = function(side, x_distance)
-  {
+  this.stretch_white_to_white = function (side, x_distance) {
     let line_key = `line_0`
     let layer_key = `distance_line_layer_0`
     if (!this.lines.hasOwnProperty(line_key))
       return;
-      let points = this.lines[line_key].points()
-      if(side === 'left')
-      {
-        let point_x = points[0] + x_distance
-        points[0] = point_x
-      }
-      else if(side === 'right')
-      {
-        let point_x = points[2] + x_distance
-        points[2] = point_x
-      }
-      this.lines[line_key].points(points)
-      this.line_layers[layer_key].draw()
-      
+    let points = this.lines[line_key].points()
+    if (side === 'left') {
+      let point_x = points[0] + x_distance
+      points[0] = point_x
+    }
+    else if (side === 'right') {
+      let point_x = points[2] + x_distance
+      points[2] = point_x
+    }
+    this.lines[line_key].points(points)
+    this.line_layers[layer_key].draw()
+
   }
   this.get_white_to_white_control = function (mouse_xy) {
     let line_key = `line_0`
@@ -398,8 +394,8 @@ function EyeBoard(container = 'main-canvas') {
     })
 
     let circle_layer = new Konva.Layer({ clearBeforeDraw: true });
-  
-    let tr = new Konva.Transformer({rotateEnabled:false,centeredScaling:true,enabledAnchors:['top-left', 'top-right', 'bottom-left', 'bottom-right'],borderEnabled:false})
+
+    let tr = new Konva.Transformer({ rotateEnabled: false, centeredScaling: true, enabledAnchors: ['top-left', 'top-right', 'bottom-left', 'bottom-right'], borderEnabled: false })
     this.circle_transform = tr
     // add cursor styling
     circle.on('mouseover', function () {
@@ -409,9 +405,9 @@ function EyeBoard(container = 'main-canvas') {
       }
     });
     circle.on('mouseout', function () {
-      if(circle.draggable()) {
-      $('#main-canvas').removeClass();
-      $('#main-canvas').addClass('custom_cross_cursor')
+      if (circle.draggable()) {
+        $('#main-canvas').removeClass();
+        $('#main-canvas').addClass('custom_cross_cursor')
       }
     });
 
@@ -741,10 +737,10 @@ function EyeBoard(container = 'main-canvas') {
     if (angleDeg < 0) {
       angleDeg = 360 + angleDeg;
     }
-    if(line_index !== 0){
-    this.line_layers[layer_key].clear()
-    this.lines[line_key].points([center_x, center_y, point[0], point[1]])
-    this.lines[line_key].draw()
+    if (line_index !== 0) {
+      this.line_layers[layer_key].clear()
+      this.lines[line_key].points([center_x, center_y, point[0], point[1]])
+      this.lines[line_key].draw()
     }
 
 
@@ -752,16 +748,29 @@ function EyeBoard(container = 'main-canvas') {
     return { 'distance': distance.toFixed(3), 'angle': angleDeg.toFixed(3), 'angle2': (360 - angleDeg).toFixed(3) }
   }
 
-  this.calculate_distance_with_curvature = function(euclidean_distance){
-    if(this.sim_k1 !== 'undefined'){
-    let _val = (euclidean_distance * euclidean_distance) / (2 * this.sim_k1 * this.sim_k1)
-    _val = 1 - _val
-    let angle = Math.acos(_val)
-    let _distance = angle * this.sim_k1
-    return _distance
+  this.calculate_distance_with_curvature = function (euclidean_distance) {
+    let sim_k = 'undefined'
+    if (this.sim_k1 === 'undefined' && this.sim_k2 === 'undefined') {
+      sim_k = 'undefined'
     }
-    else
-    {
+    else if (this.sim_k1 !== 'undefined' && this.sim_k2 !== 'undefined') {
+      sim_k = (this.sim_k1 + this.sim_k2) / 2
+    }
+    else if (this.sim_k1 !== 'undefined' && this.sim_k2 === 'undefined') {
+      sim_k = this.sim_k1
+    }
+    else if (this.sim_k1 === 'undefined' && this.sim_k2 !== 'undefined') {
+      sim_k = this.sim_k2
+    }
+
+    if (sim_k !== 'undefined') {
+      let _val = (euclidean_distance * euclidean_distance) / (2 * sim_k * sim_k)
+      _val = 1 - _val
+      let angle = Math.acos(_val)
+      let _distance = angle * sim_k
+      return _distance.toFixed(3)
+    }
+    else {
       return euclidean_distance
     }
   }
