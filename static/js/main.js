@@ -201,7 +201,7 @@ $(document).ready(() => {
     }
     if(sim_k1.length > 0)
     {
-      eye_board.sim_k1 = (1/sim_k1) * 1000
+      eye_board.sim_k1 = (1/sim_k1) * 1000 * 0.3375
     }
     else
     {
@@ -210,7 +210,7 @@ $(document).ready(() => {
 
     if(sim_k2.length > 0)
     {
-      eye_board.sim_k2 = (1/sim_k2) * 1000
+      eye_board.sim_k2 = (1/sim_k2) * 1000 * 0.3375
     }
     else
     {
